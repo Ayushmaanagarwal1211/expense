@@ -8,7 +8,37 @@ let expenseSlice = createSlice({
     name:"Expense",
     reducers:{
         addExpense:(state,action)=>{
-
+            console.log(state)
+        }
+        ,
+        filtering:(state,action)=>{
+            let {data,is_ascending} = action.payload
+            let arr = [...state.expense]
+            if(data.includes("date")){
+                if(is_ascending == "true"){
+                    arr.sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
+                }else{
+                    arr.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+                }
+            }
+            if(data.includes("amount")){
+                if(is_ascending == "true"){
+                    arr.sort((a, b) => Number(a.amount) - Number(b.amount))
+                }else{
+                    arr.sort((a, b) => Number(b.amount) - Number(a.amount))
+                }
+            }
+            if(data.includes("title")){
+                if(is_ascending == "true"){
+                    arr.sort((a, b) => a.title.localeCompare(b.title))
+                }else{
+                    arr.sort((a, b) => b.title.localeCompare(a.title))
+                }
+            }
+            if(data.length==0){
+                arr = getData()
+            }
+            state.expense = [...arr]
         },
         filter : (state,action)=>{
             let {id,data} = action.payload
@@ -61,7 +91,7 @@ let filterSlice = createSlice({
        
     }
 })
-export const {addExpense,edit,deleteData,fill} = expenseSlice.actions
+export const {addExpense,edit,deleteData,fill,filtering} = expenseSlice.actions
 export default expenseSlice.reducer
 export let filter_slice =  filterSlice.reducer
 export const {filter} = expenseSlice.actions

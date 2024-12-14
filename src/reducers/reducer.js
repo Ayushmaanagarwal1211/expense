@@ -25,7 +25,6 @@ export function reducer(state,action){
         case "FILL":{
 
         }
-     
         case "DELETE": {
             let all_expenses = state.filter((expense) => expense.id !== id);
             saveData(all_expenses);

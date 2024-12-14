@@ -6,7 +6,8 @@ import context from '../context';
 import ExpenseCardList from '../components/ExpenseCardList';
 import FilterDropdown from '../components/FilterDropdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { edit, filter,deleteData } from '../slice';
+import { edit, filter,deleteData, sort1, addExpense, filtering } from '../slice';
+import SortingOptions from '../components/SortingOptions';
 
 const ExpenseListPage = () => {
     let {isTable,setIsTable} = useContext(context)
@@ -16,6 +17,7 @@ const ExpenseListPage = () => {
     let [categories,setCategories] = useState([])
     let [selectedCategories,setSelectedCategories] = useState([])
     let dispatch = useDispatch()
+    let [options,setOptions] = useState([])
     useEffect(()=>{
         dispatch(filter({categories:selectedCategories}))
     },[selectedCategories])
@@ -29,6 +31,11 @@ const ExpenseListPage = () => {
         setSelectedCategories(prev=>[...prev,data])
     }
 
+    let [sorting_state,setSortingState] = useState("true")
+
+    useEffect(()=>{
+        console.log(expense)
+    },[expense])
 
     useEffect(()=>{
         let arr = []
@@ -50,7 +57,22 @@ const ExpenseListPage = () => {
             setIsTable(true)
         }
     }
- 
+    function handleClick(e){
+        console.log(e)
+        if(options.includes(e.target.name)){
+           let arr =  options.filter(data=>data!==e.target.name)
+           setOptions([...arr])
+           e.target.checked = false
+           return 
+        }
+        let arr = [...options]
+        arr.push(e.target.name)
+        setOptions([...arr])
+        return 
+    }
+    useEffect(()=>{
+        dispatch(filtering({data:options , is_ascending:sorting_state}))
+    },[options,sorting_state])
     return (
         <>
             <h1>Expense List</h1>
@@ -60,8 +82,11 @@ const ExpenseListPage = () => {
 
             </select>
           <FilterDropdown  handleSelectedCategories={onSelect}  expense={expense}/>
-         
-
+         <select onChange={(e)=>setSortingState(e.target.value)}>
+            <option value={"true"}>Ascending</option>
+            <option value={"false"}>Descending</option>
+         </select>
+        <SortingOptions handleClick={handleClick}/>
           {isTable ?   <ExpenseList  onSaveExpense={handleSave} expenses={expense} onDeleteExpense={handleDeleteExpense} />
             :<ExpenseCardList  onSaveExpense={handleSave} expenses={expense} onDeleteExpense={handleDeleteExpense} />}
         </>

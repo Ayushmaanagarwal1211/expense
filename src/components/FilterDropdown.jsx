@@ -12,7 +12,7 @@ export default function FilterDropdown({expense,dispatch,handleSelectedCategorie
           }   
         }
         setCategories([...arr])
-    },[expense])
+    },[])
 
     
   return (
@@ -21,8 +21,8 @@ export default function FilterDropdown({expense,dispatch,handleSelectedCategorie
 
         {
             categories.map((data,index)=>{
-              return <div onClick={()=>handleSelectedCategories(data)}>
-              <input type='checkbox' id={index} ></input>  
+              return data!=="" &&  <div >
+              <input onClick={()=>handleSelectedCategories(data)} type='checkbox' id={index} ></input>  
               <label htmlFor={index}>{data}</label>
             </div>})
         }
